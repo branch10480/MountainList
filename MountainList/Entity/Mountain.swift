@@ -27,4 +27,8 @@ struct Mountain: Equatable, Codable {
     let viewCount: Int
     let difficultyLevel: Int
     let physicalLevel: Int
+    
+    public static func == (lhs: Self, rhs: Self) -> Bool {
+        return lhs.id == rhs.id
+    }
 }
