@@ -6,26 +6,33 @@
 //
 
 import Foundation
-import RxSwift
 import Alamofire
 
 protocol MountainsGatewayProtocol {
     /// 山情報の取得を行う
-    func fetch() -> Single<MountainStatusList>
+    func fetch(completion: @escaping (Result<[Mountain]>) -> Void)
     /// いいね！情報を保存する
-    func save(like: Bool, for id: Mountain.ID) -> Single<Void>
+    func save(
+        like: Bool,
+        for id: Mountain.ID,
+        completion: @escaping (Result<Void>) -> Void
+    )
 }
 
 final class MountainsGateway: MountainsGatewayProtocol {
-
-    var webClient: WebClientProtocol!
     
-    func fetch() -> Single<MountainStatusList> {
-        return webClient.fetch()
+    var webClient: MountainRepositoryProtocol!
+    
+    func fetch(completion: @escaping (Result<[Mountain]>) -> Void) {
+        webClient.fetch(completion: completion)
     }
     
-    func save(like: Bool, for id: Mountain.ID) -> Single<Void> {
-        return webClient.save(like: like, for: id)
+    func save(
+        like: Bool,
+        for id: Mountain.ID,
+        completion: @escaping (Result<Void>) -> Void
+    ) {
+        webClient.save(like: like, for: id, completion: completion)
     }
 }
 

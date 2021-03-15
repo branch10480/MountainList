@@ -11,6 +11,7 @@ target 'MountainList' do
   pod 'RxCocoa'
   pod 'RxDataSources', '~> 4.0'
   pod 'SDWebImage', '~> 5.0'
+  pod 'JGProgressHUD'
 
   target 'MountainListTests' do
     inherit! :search_paths

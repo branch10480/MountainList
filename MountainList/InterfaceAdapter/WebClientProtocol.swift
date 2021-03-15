@@ -6,10 +6,12 @@
 //
 
 import Foundation
-import RxSwift
 
-protocol WebClientProtocol {
-    func fetch() -> Single<MountainStatusList>
-    func save(like: Bool, for id: Mountain.ID) -> Single<Void>
+protocol MountainRepositoryProtocol {
+    func fetch(completion: @escaping (Result<[Mountain]>) -> Void)
+    func save(
+        like: Bool,
+        for id: Mountain.ID,
+        completion: @escaping (Result<Void>) -> Void)
 }
 

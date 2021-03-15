@@ -14,9 +14,21 @@ final class Application {
     private init() {}
     
     // Use Case.
+    private(set) var useCase: MountainListUseCase!
     
     func configure(with window: UIWindow) {
         buildLayer()
+        
+        // Use Case.
+        useCase = MountainListUseCase()
+        
+        // Interface Adapter.
+        let mountainsGateway = MountainsGateway()
+        useCase.mountainsGateway = mountainsGateway
+        
+        // Framework, Driver.
+        let mountainsRepository = MountainRepositoryStub()
+        mountainsGateway.webClient = mountainsRepository
         
         let sb = UIStoryboard(name: "Main", bundle: nil)
         window.rootViewController = sb.instantiateInitialViewController()
