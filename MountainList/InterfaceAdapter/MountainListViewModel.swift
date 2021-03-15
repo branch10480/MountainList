@@ -8,10 +8,12 @@
 import Foundation
 import RxSwift
 import RxRelay
+import RxDataSources
 
 final class MountainListViewModel {
     
     var isLoading = BehaviorRelay<Bool>(value: false)
+    var sections = BehaviorRelay<[MountainListSectionModel]>(value: [])
     var errorMsgDidReceived = PublishRelay<String>()
     
     private let useCase: MountainListUseCaseProtocol!
@@ -24,9 +26,13 @@ final class MountainListViewModel {
         self.useCase.fetch()
             .subscribe(
                 onSuccess: { [weak self] statuses in
-                    for status in statuses {
-                        print(status)
-                    }
+                    let cellViewDataList = Array(mountainsStatuses: statuses)
+                    let sections = [
+                        MountainListSectionModel(
+                            model: .mountains,
+                            items: cellViewDataList.map{ MountainListSectionItem.mountain($0) })
+                    ]
+                    self?.sections.accept(sections)
                     self?.isLoading.accept(false)
                 },
                 onError: { [weak self] error in
@@ -36,4 +42,41 @@ final class MountainListViewModel {
             .disposed(by: disposeBag)
     }
     
+}
+
+// MARK: - RxDataSources
+
+typealias MountainListSectionModel =
+    AnimatableSectionModel<MountainListSectionId, MountainListSectionItem>
+
+enum MountainListSectionId: String, IdentifiableType {
+    
+    case mountains = "mountain"
+    
+    var identity: String {
+        return rawValue
+    }
+}
+
+enum MountainListSectionItem: IdentifiableType, Equatable {
+    
+    case mountain(_ viewData: MountainCellViewData)
+    
+    var identity: String {
+        switch self {
+        case .mountain(let viewData):
+            return viewData.id
+        }
+    }
+    
+    static func == (lhs: Self, rhs: Self) -> Bool {
+        switch (lhs, rhs) {
+        case (.mountain(let lhsData), .mountain(let rhsData)):
+            return
+                lhsData.id == rhsData.id &&
+                lhsData.name == rhsData.name &&
+                lhsData.isLike == rhsData.isLike &&
+                lhsData.likeCount == rhsData.likeCount
+        }
+    }
 }

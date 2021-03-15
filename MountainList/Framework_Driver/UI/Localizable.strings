@@ -7,3 +7,4 @@
 */
 
 "MountainListView.title" = "山一覧画面";
+"MountainCell.likeTextLabel.text" = "いいね！";
