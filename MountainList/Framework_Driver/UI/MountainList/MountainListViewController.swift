@@ -8,9 +8,10 @@
 import UIKit
 import JGProgressHUD
 import RxSwift
+import RxCocoa
 import RxDataSources
 
-class MountainListViewController: UIViewController {
+class MountainListViewController: UIViewController, MountainListViewProtocol {
 
     fileprivate enum CellId {
         static let mountain = "mountainCell"
@@ -34,6 +35,7 @@ class MountainListViewController: UIViewController {
         }
     )
     private var viewModel: MountainListViewModel!
+    private var router: MountainListRouterProtocol!
     private let disposeBag = DisposeBag()
     private let hud = JGProgressHUD()
 
@@ -42,8 +44,9 @@ class MountainListViewController: UIViewController {
     override func awakeFromNib() {
         super.awakeFromNib()
         
-        let useCase: MountainListUseCaseProtocol = Application.shared.useCase
+        let useCase: MountainsUseCaseProtocol = Application.shared.useCase
         self.viewModel = MountainListViewModel(useCase: useCase)
+        self.router = MountainListRouter(view: self)
     }
 
     override func viewDidLoad() {
@@ -94,5 +97,10 @@ class MountainListViewController: UIViewController {
 extension MountainListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+        let item = dataSource[indexPath]
+        switch item {
+        case .mountain(let viewData):
+            router.transitionToMountainDetail(id: Mountain.ID(rawValue: viewData.id))
+        }
     }
 }

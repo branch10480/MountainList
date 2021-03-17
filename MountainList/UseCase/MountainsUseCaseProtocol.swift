@@ -1,5 +1,5 @@
 //
-//  MountainListUseCase.swift
+//  MountainsUseCaseProtocol.swift
 //  MountainList
 //
 //  Created by branch10480 on 2021/03/14.
@@ -9,9 +9,13 @@ import Foundation
 import RxSwift
 
 /// Interface Adapter へ公開するインタフェース
-protocol MountainListUseCaseProtocol {
+protocol MountainsUseCaseProtocol {
     /// 山情報一覧を取得
     func fetch() -> Single<[MountainStatus]>
+    /// 山情報を取得
+    func get(id: Mountain.ID) -> Single<MountainStatus?>
+    /// おすすめの山情報を取得
+    func getRecommendedMountains(id: Mountain.ID) -> Single<[MountainStatus]>
     /// いいね！登録
     func set(like: Bool, for mountain: Mountain.ID) -> Single<Void>
 
@@ -19,7 +23,7 @@ protocol MountainListUseCaseProtocol {
     var mountainsGateway: MountainsGatewayProtocol! { get set }
 }
 
-final class MountainListUseCase: MountainListUseCaseProtocol {
+final class MountainListUseCase: MountainsUseCaseProtocol {
     
     var mountainsGateway: MountainsGatewayProtocol!
     
@@ -39,6 +43,39 @@ final class MountainListUseCase: MountainListUseCaseProtocol {
                 }
             }
             
+            return Disposables.create()
+        }
+    }
+    
+    func get(id: Mountain.ID) -> Single<MountainStatus?> {
+        return Single<MountainStatus?>.create { [weak self] observer in
+            if let mountain = self?.statusList[id] {
+                observer(.success(mountain))
+            } else {
+                observer(.success(nil))
+            }
+            return Disposables.create()
+        }
+    }
+    
+    func getRecommendedMountains(id: Mountain.ID) -> Single<[MountainStatus]> {
+        return Single<[MountainStatus]>.create { [weak self] observer in
+            
+            // TODO: おすすめの山抽出ロジックを書く
+            
+            
+            
+            
+            
+            var mountains: [MountainStatus] = []
+            for i in 0...1 {
+                if let mountain = self?.statusList[i] {
+                    mountains.append(mountain)
+                } else {
+                    break
+                }
+            }
+            observer(.success(mountains))
             return Disposables.create()
         }
     }

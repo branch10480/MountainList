@@ -61,4 +61,8 @@ struct MountainStatusList {
     subscript(id: Mountain.ID) -> MountainStatus? {
         return statuses.first(where: { $0.mountain.id == id })
     }
+    
+    subscript(id: Int) -> MountainStatus? {
+        return statuses[id]
+    }
 }

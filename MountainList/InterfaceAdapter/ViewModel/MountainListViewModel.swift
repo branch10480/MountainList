@@ -16,10 +16,10 @@ final class MountainListViewModel {
     var sections = BehaviorRelay<[MountainListSectionModel]>(value: [])
     var errorMsgDidReceived = PublishRelay<String>()
     
-    private let useCase: MountainListUseCaseProtocol!
+    private let useCase: MountainsUseCaseProtocol!
     private let disposeBag = DisposeBag()
     
-    init(useCase: MountainListUseCaseProtocol) {
+    init(useCase: MountainsUseCaseProtocol) {
         self.useCase = useCase
         
         isLoading.accept(true)
