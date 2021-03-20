@@ -57,32 +57,43 @@ final class MountainDetailViewModel {
     }
     
     private func refresh() {
+        isLoading.accept(true)
         useCase.get(id: id).subscribe(onSuccess: { [weak self] status in
             guard let status: MountainStatus = status,
                   let self = self
             else {
                 return
             }
-            self.viewData1.accept(self.convert(from: status))
-        }, onError: { e in
+            self.viewData1.accept(status.convertToData1)
+            self.isLoading.accept(false)
             
+            // おすすめの山情報取得
+            self.fetchRecommendedMountains(with: self.id)
+
+        }, onError: { [weak self] e in
+            self?.errorMsgDidReceived.accept(e.localizedDescription)
+            self?.isLoading.accept(false)
         })
         .disposed(by: disposeBag)
     }
     
-    private func convert(from status: MountainStatus) -> MountainDetailViewData1 {
-        
-        let mountain = status.mountain
-        let data = MountainDetailViewData1(
-            name: mountain.name,
-            location: mountain.prefectures.joined(separator: " / "),
-            elevation: String(format: "%.2f m", mountain.elevation),
-            isLike: status.isLiked,
-            likeCount: mountain.likeCount.description,
-            mainImage: mountain.imageUrl,
-            description: mountain.description
-        )
-        return data
+    private func fetchRecommendedMountains(with id: Mountain.ID) {
+        isLoading.accept(true)
+        useCase.getRecommendedMountains(id: id)
+            .subscribe(onSuccess: { [weak self] mountains in
+                let data = mountains.map {
+                    MountainDetailViewData2.Mountain(
+                        image: $0.mountain.imageUrl,
+                        name: $0.mountain.name
+                    )
+                }
+                self?.viewData2.accept(MountainDetailViewData2(recommendedMountains: data))
+                self?.isLoading.accept(false)
+            }, onError: { [weak self] e in
+                self?.errorMsgDidReceived.accept(e.localizedDescription)
+                self?.isLoading.accept(false)
+            })
+            .disposed(by: disposeBag)
     }
     
 }
@@ -94,7 +105,7 @@ fileprivate extension MountainStatus {
         let data = MountainDetailViewData1(
             name: mountain.name,
             location: mountain.prefectures.joined(separator: " / "),
-            elevation: String(format: "%.2f m", mountain.elevation),
+            elevation: String(format: "標高 %.2fm", mountain.elevation),
             isLike: status.isLiked,
             likeCount: status.likeCount.description,
             mainImage: mountain.imageUrl,
