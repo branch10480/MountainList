@@ -12,6 +12,8 @@ import RxSwift
 protocol MountainsUseCaseProtocol {
     /// 山情報一覧を取得
     func fetch() -> Single<[MountainStatus]>
+    /// 山情報一覧を取得（通信をしない）
+    func fetchLocally() -> Single<[MountainStatus]>
     /// 山情報を取得
     func get(id: Mountain.ID) -> Single<MountainStatus?>
     /// おすすめの山情報を取得
@@ -43,6 +45,13 @@ final class MountainListUseCase: MountainsUseCaseProtocol {
                 }
             }
             
+            return Disposables.create()
+        }
+    }
+    
+    func fetchLocally() -> Single<[MountainStatus]> {
+        return Single<[MountainStatus]>.create { [weak self] observer in
+            observer(.success(self?.statusList.statuses ?? []))
             return Disposables.create()
         }
     }

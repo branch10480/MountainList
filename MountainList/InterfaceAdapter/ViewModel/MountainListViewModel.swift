@@ -18,21 +18,35 @@ final class MountainListViewModel {
     
     private let useCase: MountainsUseCaseProtocol!
     private let disposeBag = DisposeBag()
+    private let hasFetchedMountains = BehaviorRelay<Bool>(value: false)
     
-    init(useCase: MountainsUseCaseProtocol) {
+    init(
+        useCase: MountainsUseCaseProtocol,
+        viewWillAppear: Observable<Void>
+    ) {
         self.useCase = useCase
+        self.refresh()
         
+        self.subscribeViewWillAppear(viewWillAppear)
+    }
+    
+    private func subscribeViewWillAppear(_ observable: Observable<Void>) {
+        observable
+            .withLatestFrom(hasFetchedMountains.asObservable())
+            .filter { $0 }
+            .subscribe(onNext: { [weak self] _ in
+                self?.refreshLocally()
+            })
+            .disposed(by: disposeBag)
+    }
+    
+    private func refresh() {
         isLoading.accept(true)
         self.useCase.fetch()
             .subscribe(
                 onSuccess: { [weak self] statuses in
-                    let cellViewDataList = Array(mountainsStatuses: statuses)
-                    let sections = [
-                        MountainListSectionModel(
-                            model: .mountains,
-                            items: cellViewDataList.map{ MountainListSectionItem.mountain($0) })
-                    ]
-                    self?.sections.accept(sections)
+                    self?.setSections(from: statuses)
+                    self?.hasFetchedMountains.accept(true)
                     self?.isLoading.accept(false)
                 },
                 onError: { [weak self] error in
@@ -40,6 +54,24 @@ final class MountainListViewModel {
                     self?.errorMsgDidReceived.accept(error.localizedDescription)
                 })
             .disposed(by: disposeBag)
+    }
+    
+    private func refreshLocally() {
+        useCase.fetchLocally()
+            .subscribe(onSuccess: { [weak self] statuses in
+                self?.setSections(from: statuses)
+            })
+            .disposed(by: disposeBag)
+    }
+    
+    private func setSections(from statuses: [MountainStatus]) {
+        let cellViewDataList = Array(mountainsStatuses: statuses)
+        let sections = [
+            MountainListSectionModel(
+                model: .mountains,
+                items: cellViewDataList.map{ MountainListSectionItem.mountain($0) })
+        ]
+        self.sections.accept(sections)
     }
     
 }

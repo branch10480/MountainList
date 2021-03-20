@@ -8,6 +8,7 @@
 import UIKit
 import JGProgressHUD
 import RxSwift
+import RxRelay
 import RxCocoa
 import RxDataSources
 
@@ -38,6 +39,7 @@ class MountainListViewController: UIViewController, MountainListViewProtocol {
     private var router: MountainListRouterProtocol!
     private let disposeBag = DisposeBag()
     private let hud = JGProgressHUD()
+    private let viewWillAppearRelay = PublishRelay<Void>()
 
     @IBOutlet weak var tableView: UITableView!
     
@@ -45,7 +47,10 @@ class MountainListViewController: UIViewController, MountainListViewProtocol {
         super.awakeFromNib()
         
         let useCase: MountainsUseCaseProtocol = Application.shared.useCase
-        self.viewModel = MountainListViewModel(useCase: useCase)
+        self.viewModel = MountainListViewModel(
+            useCase: useCase,
+            viewWillAppear: viewWillAppearRelay.asObservable()
+        )
         self.router = MountainListRouter(view: self)
     }
 
@@ -56,6 +61,11 @@ class MountainListViewController: UIViewController, MountainListViewProtocol {
         DispatchQueue.main.async {
             self.bind()
         }
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        viewWillAppearRelay.accept(())
     }
     
     private func setup() {

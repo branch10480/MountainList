@@ -24,7 +24,7 @@ extension Array where Element == MountainCellViewData {
                 thumbnailUrl: $0.mountain.thumbnailUrl,
                 name: $0.mountain.name,
                 isLike: $0.isLiked,
-                likeCount: $0.mountain.likeCount
+                likeCount: $0.likeCount
             )
         }
     }
