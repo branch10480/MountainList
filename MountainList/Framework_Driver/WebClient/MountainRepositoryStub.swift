@@ -35,8 +35,8 @@ final class MountainRepositoryStub: MountainRepositoryProtocol {
     }
     
     func save(like: Bool, for id: Mountain.ID, completion: @escaping (Result<Void>) -> Void) {
-        DispatchQueue.global().asyncAfter(deadline: .now() + 1) {
+//        DispatchQueue.global().asyncAfter(deadline: .now() + 1) {
             completion(.success(()))
-        }
+//        }
     }
 }

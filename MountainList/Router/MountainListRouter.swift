@@ -16,7 +16,7 @@ protocol MountainListRouterProtocol {
 
 final class MountainListRouter: MountainListRouterProtocol {
     
-    private(set) weak var view: Transitioner!
+    private(set) weak var view: MountainListViewProtocol!
     
     init(view: MountainListViewProtocol) {
         self.view = view
@@ -24,11 +24,9 @@ final class MountainListRouter: MountainListRouterProtocol {
 
     func transitionToMountainDetail(id: Mountain.ID) {
         let vc = MountainDetailViewController()
-        let viewModel = MountainDetailViewModel(
-            useCase: Application.shared.useCase,
-            id: id
-        )
-        vc.viewModel = viewModel
+        vc.mountainId = id
+        let router = MountainDetailRouter(view: vc)
+        vc.router = router
         view.pushViewController(vc, animated: true)
     }
 }

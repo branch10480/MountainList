@@ -28,6 +28,15 @@ struct Mountain: Equatable, Codable {
     let difficultyLevel: Int
     let physicalLevel: Int
     
+    var isLikeBool: Bool {
+        switch isLike {
+        case "true":
+            return true
+        default:
+            return false
+        }
+    }
+    
     public static func == (lhs: Self, rhs: Self) -> Bool {
         return lhs.id == rhs.id
     }

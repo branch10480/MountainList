@@ -38,8 +38,8 @@ class MountainCell: UITableViewCell {
     @IBOutlet weak var likeTextLabel: UILabel!
     @IBOutlet weak var likeCountLabel: UILabel!
     
-    private let likeNormalColor = UIColor.darkGray
-    private let likeActiveColor = UIColor.orange
+    private let likeNormalColor = UIColor.likeNormalColor
+    private let likeActiveColor = UIColor.likeActiveColor
 
     override func awakeFromNib() {
         super.awakeFromNib()

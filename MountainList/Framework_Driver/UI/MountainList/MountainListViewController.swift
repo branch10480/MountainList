@@ -81,14 +81,6 @@ class MountainListViewController: UIViewController, MountainListViewProtocol {
             .bind(to: tableView.rx.items(dataSource: dataSource))
             .disposed(by: disposeBag)
     }
-    
-    private func setHUD(visible: Bool) {
-        if visible {
-            hud.show(in: view)
-        } else {
-            hud.dismiss()
-        }
-    }
 
 }
 

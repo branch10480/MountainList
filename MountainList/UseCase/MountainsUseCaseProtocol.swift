@@ -17,7 +17,7 @@ protocol MountainsUseCaseProtocol {
     /// おすすめの山情報を取得
     func getRecommendedMountains(id: Mountain.ID) -> Single<[MountainStatus]>
     /// いいね！登録
-    func set(like: Bool, for mountain: Mountain.ID) -> Single<Void>
+    func set(like: Bool, for mountain: Mountain.ID) -> Single<[MountainStatus]>
 
     // 外部オブジェクト
     var mountainsGateway: MountainsGatewayProtocol! { get set }
@@ -80,13 +80,21 @@ final class MountainListUseCase: MountainsUseCaseProtocol {
         }
     }
     
-    func set(like: Bool, for mountain: Mountain.ID) -> Single<Void> {
-        return Single<Void>.create { [weak self] observer in
+    func set(like: Bool, for mountain: Mountain.ID) -> Single<[MountainStatus]> {
+        return Single<[MountainStatus]>.create { [weak self] observer in
             
-            self?.mountainsGateway.save(like: like, for: mountain, completion: { result in
+            self?.mountainsGateway.save(like: like, for: mountain, completion: { [weak self] result in
                 switch result {
                 case .success:
-                    observer(.success(()))
+                    guard let self = self else {
+                        return
+                    }
+                    do {
+                        try self.statusList.set(isLike: like, for: mountain)
+                        observer(.success(self.statusList.statuses))
+                    } catch(let e) {
+                        observer(.error(e))
+                    }
                 case .failure(let e):
                     observer(.error(e))
                 }

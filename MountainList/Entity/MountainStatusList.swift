@@ -10,6 +10,26 @@ import Foundation
 struct MountainStatus: Equatable {
     let mountain: Mountain
     let isLiked: Bool
+
+    var likeCount: Int {
+        if mountain.isLikeBool == isLiked {
+            return mountain.likeCount
+        }
+        switch (mountain.isLikeBool, isLiked) {
+        case (true, true), (false, false):
+            return mountain.likeCount
+        case (true, false):
+            let count = mountain.likeCount - 1
+            if count < 0 {
+                return 0
+            } else {
+                return count
+            }
+        case (false, true):
+            return mountain.likeCount + 1
+        }
+        
+    }
     
     static func == (lhs: Self, rhs: Self) -> Bool {
         return lhs.mountain == rhs.mountain
@@ -19,7 +39,7 @@ struct MountainStatus: Equatable {
 extension Array where Element == MountainStatus {
     init(mountains: [Mountain]) {
         self = mountains.map { mountain in
-            MountainStatus(mountain: mountain, isLiked: mountain.isLike == "true")
+            MountainStatus(mountain: mountain, isLiked: mountain.isLikeBool)
         }
     }
 }
