@@ -91,7 +91,11 @@ final class MountainListUseCase: MountainsUseCaseProtocol {
                     notEqualIdMountains.append(status)
                 }
             }
-            let candidates: [MountainStatus] = equalIdMountains + notEqualIdMountains
+            var candidates: [MountainStatus] = equalIdMountains + notEqualIdMountains
+            
+            // 対象の山情報を削除
+            candidates.removeAll(where: { s in s.mountain.id == id })
+            
             var recommendedMountains: [MountainStatus] = []
             var index = 0
             while index < maxCount, index < candidates.count {
