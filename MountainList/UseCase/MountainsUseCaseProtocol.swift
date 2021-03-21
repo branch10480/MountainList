@@ -17,7 +17,7 @@ protocol MountainsUseCaseProtocol {
     /// 山情報を取得
     func get(id: Mountain.ID) -> Single<MountainStatus?>
     /// おすすめの山情報を取得
-    func getRecommendedMountains(id: Mountain.ID) -> Single<[MountainStatus]>
+    func getRecommendedMountains(id: Mountain.ID, maxCount: Int) -> Single<[MountainStatus]>
     /// いいね！登録
     func set(like: Bool, for mountain: Mountain.ID) -> Single<[MountainStatus]>
 
@@ -67,24 +67,38 @@ final class MountainListUseCase: MountainsUseCaseProtocol {
         }
     }
     
-    func getRecommendedMountains(id: Mountain.ID) -> Single<[MountainStatus]> {
+    func getRecommendedMountains(id: Mountain.ID, maxCount: Int) -> Single<[MountainStatus]> {
         return Single<[MountainStatus]>.create { [weak self] observer in
-            
-            // TODO: おすすめの山抽出ロジックを書く
-            
-            
-            
-            
-            
-            var mountains: [MountainStatus] = []
-            for i in 0...1 {
-                if let mountain = self?.statusList[i] {
-                    mountains.append(mountain)
+            guard let self = self else {
+                return Disposables.create()
+            }
+            // 第1条件: エリアIDが等しい
+            // 第2条件: いいね数が多い
+            // 第3条件: アクティビティ数が多い
+            let sorted: [MountainStatus] = self.statusList.statuses.sorted(by: { s1, s2 in
+                if s1.likeCount == s2.likeCount {
+                    return s1.mountain.activityCount > s2.mountain.activityCount
                 } else {
-                    break
+                    return s1.likeCount > s2.likeCount
+                }
+            })
+            var equalIdMountains: [MountainStatus] = []
+            var notEqualIdMountains: [MountainStatus] = []
+            for status in sorted {
+                if status.mountain.id == id {
+                    equalIdMountains.append(status)
+                } else {
+                    notEqualIdMountains.append(status)
                 }
             }
-            observer(.success(mountains))
+            let candidates: [MountainStatus] = equalIdMountains + notEqualIdMountains
+            var recommendedMountains: [MountainStatus] = []
+            var index = 0
+            while index < maxCount, index < candidates.count {
+                recommendedMountains.append(candidates[index])
+                index += 1
+            }
+            observer(.success(recommendedMountains))
             return Disposables.create()
         }
     }

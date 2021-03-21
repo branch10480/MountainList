@@ -19,6 +19,7 @@ final class MountainDetailViewModel {
     private var id: Mountain.ID!
     private let useCase: MountainsUseCaseProtocol!
     private let disposeBag = DisposeBag()
+    private let maxCountOfRecommendation: Int = 2
     
     init(
         useCase: MountainsUseCaseProtocol,
@@ -79,7 +80,7 @@ final class MountainDetailViewModel {
     
     private func fetchRecommendedMountains(with id: Mountain.ID) {
         isLoading.accept(true)
-        useCase.getRecommendedMountains(id: id)
+        useCase.getRecommendedMountains(id: id, maxCount: maxCountOfRecommendation)
             .subscribe(onSuccess: { [weak self] mountains in
                 let data = mountains.map {
                     MountainDetailViewData2.Mountain(
