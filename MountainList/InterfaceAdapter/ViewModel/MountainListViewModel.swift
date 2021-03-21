@@ -94,7 +94,7 @@ enum MountainListSectionItem: IdentifiableType, Equatable {
     
     case mountain(_ viewData: MountainCellViewData)
     
-    var identity: String {
+    var identity: Int {
         switch self {
         case .mountain(let viewData):
             return viewData.id

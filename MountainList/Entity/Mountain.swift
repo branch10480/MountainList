@@ -9,7 +9,7 @@ import Foundation
 
 struct Mountain: Equatable, Codable {
     struct ID: RawRepresentable, Hashable, Codable {
-        let rawValue: String
+        let rawValue: Int
     }
     let id: ID
     let name: String

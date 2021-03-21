@@ -27,7 +27,8 @@ final class Application {
         useCase.mountainsGateway = mountainsGateway
         
         // Framework, Driver.
-        let mountainsRepository = MountainRepositoryStub()
+        let mountainsRepository = MountainRepository()
+//        let mountainsRepository = MountainRepositoryStub()
         mountainsGateway.webClient = mountainsRepository
         
         let sb = UIStoryboard(name: "Main", bundle: nil)

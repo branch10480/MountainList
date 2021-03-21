@@ -9,7 +9,7 @@ import UIKit
 import SDWebImage
 
 struct MountainCellViewData {
-    let id: String
+    let id: Int
     let thumbnailUrl: String
     let name: String
     let isLike: Bool

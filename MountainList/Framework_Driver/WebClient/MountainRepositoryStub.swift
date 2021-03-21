@@ -13,7 +13,7 @@ final class MountainRepositoryStub: MountainRepositoryProtocol {
         DispatchQueue.global().asyncAfter(deadline: .now() + 1) {
             let mountains: [Mountain] = (0..<10).map {
                 Mountain(
-                    id: .init(rawValue: $0.description),
+                    id: .init(rawValue: $0),
                     name: "ダミー山 - \($0)", description: "ここに説明文が入ります。ここに説明文が入ります。",
                     thumbnailUrl: "https://tabi-mag.jp/wp-content/uploads/AI007801.jpg",
                     imageUrl: "https://tabi-mag.jp/wp-content/uploads/AI007801.jpg",
@@ -35,8 +35,6 @@ final class MountainRepositoryStub: MountainRepositoryProtocol {
     }
     
     func save(like: Bool, for id: Mountain.ID, completion: @escaping (Result<Void>) -> Void) {
-//        DispatchQueue.global().asyncAfter(deadline: .now() + 1) {
-            completion(.success(()))
-//        }
+        completion(.success(()))
     }
 }
