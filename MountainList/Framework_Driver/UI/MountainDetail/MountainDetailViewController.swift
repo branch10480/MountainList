@@ -57,10 +57,10 @@ class MountainDetailViewController: UIViewController, MountainDetailViewProtocol
     }
     
     private func setup() {
-        // TODO
-        likeTextLabel.text = "いいね！"
-        // TODO
-        recommendationTitleLabel.text = "おすすめ"
+        title = "MountainDetailViewController.title".localized
+        likeTextLabel.text = "MountainDetailViewController.likeTextLabel.text".localized
+        recommendationTitleLabel.text =
+            "MountainDetailViewController.recommendationTitleLabel.text".localized
     }
     
     private func bind() {

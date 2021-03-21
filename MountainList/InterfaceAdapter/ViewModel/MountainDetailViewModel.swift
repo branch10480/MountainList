@@ -106,7 +106,7 @@ fileprivate extension MountainStatus {
         let data = MountainDetailViewData1(
             name: mountain.name,
             location: mountain.prefectures.joined(separator: " / "),
-            elevation: String(format: "標高 %.2fm", mountain.elevation),
+            elevation: String(format: "elevation".localized, mountain.elevation),
             isLike: status.isLiked,
             likeCount: status.likeCount.description,
             mainImage: mountain.imageUrl,

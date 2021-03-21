@@ -8,3 +8,7 @@
 
 "MountainListView.title" = "山一覧画面";
 "MountainCell.likeTextLabel.text" = "いいね！";
+"MountainDetailViewController.title" = "山詳細画面";
+"MountainDetailViewController.likeTextLabel.text" = "いいね！";
+"MountainDetailViewController.recommendationTitleLabel.text" = "おすすめ";
+"elevation" = "標高 %.2fm";
